@@ -60,9 +60,19 @@ constexpr auto right = &Node<int>::right;
 constexpr auto left =  &Node<int>::left;
 
 
+// Поразмыслив: это НЕ свертка по ->*
+// но по оператору запятая
+
+//template<typename T, typename ... Paths>
+//Node<T>* get_tree(Node<T>* root, Paths ... paths) {
+//    return ((root = root->*paths), ...);
+//}
+
+// Верное решение
+
 template<typename T, typename ... Paths>
-Node<T>* get_tree(Node<T>* root, Paths ... paths) {
-    return ((root = root->*paths), ...);
+Node<T>* get_tree(Paths ... paths) {
+    return (... ->* paths);
 }
 
 int main()
@@ -79,9 +89,9 @@ int main()
 
     fill(top);
 
-    Node<int>* six   = get_tree(top, right);
-    Node<int>* eight = get_tree(top, right, right);
-    Node<int>* four  = get_tree(top, left, right, left);
+    Node<int>* six   = get_tree<int>(top, right);
+    Node<int>* eight = get_tree<int>(top, right, right);
+    Node<int>* four  = get_tree<int>(top, left, right, left);
 
     assert(six->data   == 6);
     assert(eight->data == 8);
